@@ -1,45 +1,45 @@
 <?php
-session_start();
-require 'db.php';  // Database connection
+    require 'db.php';  // Database connection
+    require '_session.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = md5($_POST['password']);  // You should use password_hash() in production
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = $_POST['username'];
+        $password = md5($_POST['password']);  // You should use password_hash() in production
 
-    // Prepare the SQL query using PDO
-    $query = "SELECT * FROM users WHERE username = :username AND password = :password";
-    $stmt = $conn->prepare($query);
-    
-    // Execute the query
-    $stmt->execute([
-        'username' => $username,
-        'password' => $password
-    ]);
-    
-    $count = $stmt->rowCount(); // count the result
+        // Prepare the SQL query using PDO
+        $query = "SELECT * FROM users WHERE username = :username AND password = :password";
+        $stmt = $conn->prepare($query);
+        
+        // Execute the query
+        $stmt->execute([
+            'username' => $username,
+            'password' => $password
+        ]);
+        
+        $count = $stmt->rowCount(); // count the result
 
-    //proceed if the count is greater than 0
-    if ($count > 0) {
-        // Fetch the result
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        //proceed if the count is greater than 0
+        if ($count > 0) {
+            // Fetch the result
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];
+            $_SESSION['id'] = $user['id'];
+            $_SESSION['role'] = $user['role'];
 
-        // Redirect based on role
-        if ($user['role'] === 'admin') {
-            header('Location: admin/');
-        } else if ($user['role'] === 'user') {
-            header('Location: user/');
+            // Redirect based on role
+            if ($user['role'] === 'admin') {
+                header('Location: admin/');
+            } else if ($user['role'] === 'user') {
+                header('Location: user/');
+            } else {
+                $error = "Invalid User Type";
+            }
+
+            exit;
         } else {
-            $error = "Invalid User Type";
+            $error = "Invalid username or password!";
         }
-
-        exit;
-    } else {
-        $error = "Invalid username or password!";
     }
-}
 ?>
 
 <!DOCTYPE html>

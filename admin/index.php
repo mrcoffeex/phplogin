@@ -1,9 +1,6 @@
-<?php
-    session_start();
-    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') { // check if the session is valid as admin
-        header('Location: ../');
-        exit;
-    }
+<?php  
+    include '../db.php';
+    include '_session.php';
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +12,7 @@
 </head>
 <body>
     <h2>Welcome, Admin!</h2>
-    <p>Hello, <?php echo $_SESSION['username']; ?>. You are logged in as an admin.</p>
+    <p>Hello, <?php echo $user['username']; ?>. You are logged in as an admin.</p>
     <a href="logout.php">Logout</a>
 </body>
 </html>
